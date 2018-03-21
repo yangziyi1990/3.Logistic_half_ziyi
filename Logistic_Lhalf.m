@@ -1,6 +1,6 @@
 clear;
 clc;
-rng(1);
+%rng(1);
 %% Generating simulation data %%
 beta=zeros(1,1000);
 beta(1)=5;
@@ -76,13 +76,15 @@ X=[x0,x_train];
 Y=y_train;
 
 % Step 1: Initialize (u,w,z) %
-u = exp(X * beta_int)./(1 + exp(X * beta_int));
-W = diag(u .* (1 - u));
-z = X * beta_int + inv(W) * (Y - u);
+% u = exp(X * beta_int)./(1 + exp(X * beta_int));
+% W = diag(u .* (1 - u));
+% z = X * beta_int + inv(W) * (Y - u);
+% 
+% S = (X' * W * z)/row;
+% lambda_max = 0.8; %(4/3 * (max(S)))^(1.5);
 
-S = (X' * W * z)/row;
-lambda_max = 0.8; %(4/3 * (max(S)))^(1.5);
-lambda_min = lambda_max * 0.01;
+lambda_max =norm(X'*Y,'inf'); % according to the https://github.com/yangziyi1990/SparseGDLibrary.git
+lambda_min = lambda_max * 0.001;
 m=10;
 for i=1:m
     Lambda1(i)=lambda_max*(lambda_min/lambda_max)^(i/m);
@@ -92,37 +94,37 @@ for i=1:m
     fprintf('iteration times:%d\n',i);
 end
 
-[Opt,Mse]=CV_Lhalf_logistic(X,Y,Lambda1,beta_path);
-beta=beta_path(:,Opt);
-
-beta_zero=beta(1);
-beta=beta(2:end);
-l = beta_zero + x_test * beta;
-prob=exp(l)./(1 + exp(l));
-for i=1:test_size
-    if prob(i)>0.5
-        test_y(i)=1;
-    else
-        test_y(i)=0;
-    end
-end
-error=test_y'-y_test;
-count=find(error~=0)
-fail=length(count)
-
-beta_non_zero=find(beta~=0);
-
-plot(beta_path','linewidth',1.5)
-ax = axis;
-line([opt opt], [ax(3) ax(4)], 'Color', 'b', 'LineStyle', '-.');
-xlabel('Steps')
-ylabel('Coefficeints')
-
-figure;
-hold on
-plot(Mse,'linewidth',1.5);
-ax = axis;
-line([opt opt], [ax(3) ax(4)], 'Color', 'b', 'LineStyle', '-.');
-xlabel('Steps')
-ylabel('Misclassification Error')
+% [Opt,Mse]=CV_Lhalf_logistic(X,Y,Lambda1,beta_path);
+% beta=beta_path(:,Opt);
+% 
+% beta_zero=beta(1);
+% beta=beta(2:end);
+% l = beta_zero + x_test * beta;
+% prob=exp(l)./(1 + exp(l));
+% for i=1:test_size
+%     if prob(i)>0.5
+%         test_y(i)=1;
+%     else
+%         test_y(i)=0;
+%     end
+% end
+% error=test_y'-y_test;
+% count=find(error~=0)
+% fail=length(count)
+% 
+% beta_non_zero=find(beta~=0);
+% 
+% plot(beta_path','linewidth',1.5)
+% ax = axis;
+% line([opt opt], [ax(3) ax(4)], 'Color', 'b', 'LineStyle', '-.');
+% xlabel('Steps')
+% ylabel('Coefficeints')
+% 
+% figure;
+% hold on
+% plot(Mse,'linewidth',1.5);
+% ax = axis;
+% line([opt opt], [ax(3) ax(4)], 'Color', 'b', 'LineStyle', '-.');
+% xlabel('Steps')
+% ylabel('Misclassification Error')
 

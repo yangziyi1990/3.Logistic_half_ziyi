@@ -89,12 +89,12 @@ m=10;
 for i=1:m
     Lambda1(i)=lambda_max*(lambda_min/lambda_max)^(i/m);
     lambda=Lambda1(i);
-    beta=Logistic_Lhalf_func(X,Y,beta_int,lambda);   
+    beta=Logistic_MCP_func(X,Y,beta_int,lambda);   
     beta_path(:,i)=beta;
     fprintf('iteration times:%d\n',i);
 end
 
-[Opt,Mse]=CV_Lhalf_logistic(X,Y,Lambda1,beta_path);
+[Opt,Mse]=CV_MCP_logistic(X,Y,Lambda1,beta_path);
 beta_opt=beta_path(:,Opt);
 
 beta_zero=beta_opt(1); 

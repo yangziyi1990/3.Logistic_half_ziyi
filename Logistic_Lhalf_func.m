@@ -5,7 +5,7 @@ function beta = Logistic_Lhalf_func(X,Y,beta_int,lambda)
 % Step 1: Initialize (u,w,z) %
     u = exp(X * beta_int)./(1 + exp(X * beta_int));
     W = diag(u .* (1 - u));
-    z = X * beta_int + inv(W) * (Y - u);
+    z = X * beta_int + pinv(W) * (Y - u);
 
 % Step 2: The coordinate descent algorithm for sparse logistic with the L1/2 penalty %
     iter=1;
@@ -29,6 +29,6 @@ while iter<=maxiter && norm(beta_old - beta) > (1E-8)
     beta(1)=beta_zero;
     u = exp(X * beta)./(1 + exp(X * beta));
     W = diag(u .* (1 - u));
-    z = X * beta + (W^-1) * (Y - u);
+    z = X * beta + pinv(W) * (Y - u);
     iter=iter+1;
 end

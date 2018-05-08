@@ -27,7 +27,7 @@ for j=1:length(Lambda)
         beta_zero=log(temp/(1-temp));   
         beta_int=[beta_zero;beta];
         
-        beta=Logistic_MCP_func(X_train,y_train,beta_int,lambda);
+        beta=Logistic_MCP_func(X_train,y_train,beta_ini,lambda);
         beta_zero=beta(1);
         beta=beta(2:end);
         X_validation=X_validation(:,2:end);

@@ -2,7 +2,7 @@ clear;
 clc;
 %rng(1);
 %% Generating simulation data %%
-beta=zeros(1,2000);
+beta=zeros(1,500);
 beta(1)=1;
 beta(2)=-1;
 beta(3)=1;
@@ -25,8 +25,9 @@ beta(10)=-1;
 % beta(35)=1.3;
 % beta(36)=0.8;
 
-train_size=500;
-test_size=200;
+beta_t=beta';
+train_size=100;
+test_size=20;
 sample_size=train_size+test_size;
 
 intercept=0.0;
@@ -71,6 +72,7 @@ beta_zero=log(temp/(1-temp));
 
 % Inputting X, Y, beta_int and lambda %
 beta_int=[beta_zero;beta];
+beta_true=[beta_zero;beta_t];
 x0=ones(row,1);
 X=[x0,x_train];
 Y=y_train;
@@ -94,7 +96,7 @@ for i=1:m
     fprintf('iteration times:%d\n',i);
 end
 
-[Opt,Mse]=CV_MCP_logistic(X,Y,Lambda1,beta_path);
+[Opt,Mse]=CV_MCP_logistic(X,Y,Lambda1);
 beta_opt=beta_path(:,Opt);
 
 beta_zero=beta_opt(1); 
@@ -110,26 +112,38 @@ for i=1:test_size
 end
 
 error=test_y'-y_test;
-error_number=length(nonzeros(error))
+error_number_testing=length(nonzeros(error))
 beta_non_zero=length(nonzeros(beta_opt))
 
 %% Performance
 [accurancy,sensitivity,specificity]=performance(y_test,test_y');
-fprintf('The accurancy of lhalf: %f\n' ,accurancy);
-fprintf('The sensitivity of lhalf: %f\n' ,sensitivity);
-fprintf('The specificity of lhalf: %f\n' ,specificity);
+fprintf('The accurancy of testing data (MCP): %f\n' ,accurancy);
+fprintf('The sensitivity of testing data (MCP): %f\n' ,sensitivity);
+fprintf('The specificity of testing data (MCP): %f\n' ,specificity);
 
-% plot(beta_path','linewidth',1.5)
-% ax = axis;
-% line([opt opt], [ax(3) ax(4)], 'Color', 'b', 'LineStyle', '-.');
-% xlabel('Steps')
-% ylabel('Coefficeints')
-% 
-% figure;
-% hold on
-% plot(Mse,'linewidth',1.5);
-% ax = axis;
-% line([opt opt], [ax(3) ax(4)], 'Color', 'b', 'LineStyle', '-.');
-% xlabel('Steps')
-% ylabel('Misclassification Error')
 
+%% performance for training data
+beta_zero=beta_opt(1); 
+beta=beta_opt(2:end); 
+l1 = beta_zero + x_train * beta;
+prob1=exp(l1)./(1 + exp(l1)); 
+for i=1:train_size
+    if prob1(i)>0.5
+        train_y(i)=1;
+    else
+        train_y(i)=0;
+    end
+end
+error_train=train_y'-y_train;
+error_number_train=length(nonzeros(error_train))
+
+[accurancy_train,sensitivity_train,specificity_train]=performance(y_train,train_y');
+fprintf('The accurancy of training data(MCP): %f\n' ,accurancy_train);
+fprintf('The sensitivity of training data (MCP): %f\n' ,sensitivity_train);
+fprintf('The specificity of training data (MCP): %f\n' ,specificity_train);
+
+%% performance for beta
+[accurancy_beta,sensitivity_beta,specificity_beta]=performance_beta(beta_true,beta_opt);
+fprintf('The accurancy of beta (MCP): %f\n' ,accurancy_beta);
+fprintf('The sensitivity of beta (MCP): %f\n' ,sensitivity_beta);
+fprintf('The specificity of beta (MCP): %f\n' ,specificity_beta);

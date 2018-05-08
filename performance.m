@@ -17,7 +17,7 @@ P_Len=length(P);
 N_Len=length(N);
 
 accurancy = ( TP + TN )/( P_Len + N_Len);
-sensitivity = TP / ( TP + FP );
-specificity = TN / ( FN + TN );
+sensitivity = TP / ( TP + FN );
+specificity = TN / ( FP + TN );
 
 end 

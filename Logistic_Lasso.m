@@ -2,7 +2,7 @@ clear;
 clc;
 %rng(1);
 %% Generating simulation data %%
-beta=zeros(1,500);
+beta=zeros(1,2000);
 beta(1)=1;
 beta(2)=-1;
 beta(3)=1;
@@ -26,8 +26,8 @@ beta(10)=-1;
 % beta(36)=0.8;
 
 beta_t=beta';
-train_size=100;
-test_size=20;
+train_size=500;
+test_size=200;
 sample_size=train_size+test_size;
 
 intercept=0.0;

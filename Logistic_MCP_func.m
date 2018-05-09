@@ -14,6 +14,8 @@ function beta = Logistic_MCP_func(X,Y,beta_int,lambda)
     beta_old=ones(col,1);
           
 while iter<=maxiter && norm(beta_old - beta) > (1E-8)
+    t_start = tic;
+    
     beta_old=beta;
     beta_zero=sum(W *( z - X(:,2:end) * beta(2:end)))/sum(sum(W)); 
     for k=2:col
@@ -38,4 +40,5 @@ while iter<=maxiter && norm(beta_old - beta) > (1E-8)
     W = diag(u .* (1 - u));
     z = X * beta + pinv(W) * (Y - u);
     iter=iter+1;
+    toc(t_start);
 end

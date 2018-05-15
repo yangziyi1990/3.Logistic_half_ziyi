@@ -14,17 +14,6 @@ beta(8)=-1;
 beta(9)=1;
 beta(10)=-1;
 
-% beta(1)=1.2;
-% beta(4)=1.6;
-% beta(7)=0.9;
-% beta(15)=0.6;
-% beta(19)=0.5;
-% beta(23)=-1.2;
-% beta(26)=1;
-% beta(30)=-0.5;
-% beta(35)=1.3;
-% beta(36)=0.8;
-
 beta_t=beta';
 train_size=500;
 test_size=200;
@@ -77,14 +66,7 @@ x0=ones(row,1);
 X=[x0,x_train];
 Y=y_train;
 
-% Step 1: Initialize (u,w,z) %
-% u = exp(X * beta_int)./(1 + exp(X * beta_int));
-% W = diag(u .* (1 - u));
-% z = X * beta_int + inv(W) * (Y - u);
-% 
-% S = (X' * W * z)/row;
-% lambda_max = 0.8; %(4/3 * (max(S)))^(1.5);
-
+% Setting lambda %
 lambda_max =norm(X'*Y,'inf'); % according to the https://github.com/yangziyi1990/SparseGDLibrary.git
 lambda_min = lambda_max * 0.001;
 m=10;
